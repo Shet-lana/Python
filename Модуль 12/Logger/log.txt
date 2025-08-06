@@ -1,0 +1,5 @@
+Произошла ошибка: could not convert string to float: '1,13,6'
+Произошла ошибка: [Errno 13] Permission denied: 'C:\\Users\\Kiki_\\PycharmProjects\\Модуль10_Объектно-оринтированное программирование'
+Введены числа: 1 14 8 90 55
+Сохранено в файл: C:\Users\Kiki_\PycharmProjects\result.txt
+Минимальное число: 1.0, Максимальное число: 90.0

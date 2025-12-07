@@ -1,0 +1,54 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <h2>ПЕРЕНОС ВИЗИТА</h2>
+  <p><strong>Пациент:</strong> {{ appointment.patient.get_full_name }}</p>
+  <p><strong>Текущая дата:</strong> {{ appointment.appointment_date|date:"d.m.Y H:i" }}</p>
+
+  <form method="post" id="appointment-form">
+    {% csrf_token %}
+
+    <!-- Скрытое поле для передачи doctor_id в JS -->
+    <input type="hidden" name="doctor_id" value="{{ appointment.dentist.id }}" id="doctor_id">
+
+    <div class="mb-3">
+      <label for="appointment_date">Новая дата:</label>
+      <input
+              type="date"
+              name="new_date"
+              id="appointment_date"
+              class="form-control"
+              required
+              min="{% now 'Y-m-d' %}"
+      >
+      <div class="form-text">Рабочие дни: понедельник–пятница (не праздники)</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="appointment_time">Новое время:</label>
+      <select name="new_time" id="appointment_time" class="form-control" required>
+        <option value="">--- Выберите время ---</option>
+      </select>
+      <div class="form-text">Доступно с 08:00 до 20:00, интервал — 60 минут</div>
+    </div>
+
+    <!-- Сообщение о загрузке -->
+    <div id="loading" class="mt-3" style="display: none;">
+      <div class="spinner-border spinner-border-sm"></div> Загрузка доступного времени...
+    </div>
+
+    <!-- Сообщение об отсутствии слотов -->
+    <div id="no-slots" class="alert alert-warning mt-3" style="display: none;">
+      На выбранную дату нет доступного времени. Попробуйте другую дату.
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Перенести визит</button>
+    <a href="{% url 'doctor-appointment-detail' appointment.id %}" class="btn btn-secondary">Отмена</a>
+  </form>
+</div>
+
+<!-- Подключение JS -->
+<script src="{% static 'js/book_appointment.js' %}?v=3"></script>
+{% endblock %}

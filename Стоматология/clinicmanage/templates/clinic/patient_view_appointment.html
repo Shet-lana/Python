@@ -1,0 +1,97 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<!-- История визитов -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      История визитов
+    </h2>
+
+    <!-- Таблица приёмов -->
+    {% if appointments %}
+    <div class="service-card">
+      <div class="service-body">
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+          <thead style="background-color: #d1f1ff; color: #007bff;">
+          <tr>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Дата и время</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Врач</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Жалобы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Статус</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Комментарий врача</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Файлы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for app in appointments %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.appointment_date|date:"d.m.Y H:i" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.dentist.get_full_name }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.description|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.appointment_date > now %}
+              <span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 50px; font-size: 1.3rem;">Запланирован</span>
+              {% elif app.is_attended == True %}
+              <span style="background: #007bff; color: white; padding: 5px 10px; border-radius: 50px; font-size: 1.3rem;">Пришёл</span>
+              {% elif app.is_attended == False %}
+              <span style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 50px; font-size: 1.3rem;">Не пришёл</span>
+              {% else %}
+              <span style="background: #6c757d; color: white; padding: 5px 10px; border-radius: 50px; font-size: 1.3rem;">Завершён</span>
+              {% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.comment|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.documents.all %}
+              {% for doc in app.documents.all %}
+              <div class="mb-1">
+                <a href="{{ doc.file.url }}" target="_blank" style="color: #007bff; text-decoration: none;">
+                  {% if doc.file.url|slice:"-4:" in ".jpg,.jpeg,.png,.gif" %}
+                  🖼
+                  {% elif doc.file.url|slice:"-4:" == ".pdf" %}
+                  📄
+                  {% else %}
+                  📎
+                  {% endif %}
+                </a>
+              </div>
+              {% endfor %}
+              {% else %}
+              —
+              {% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.appointment_date > now %}
+              <form method="post" action="{% url 'cancel-appointment' app.id %}" onsubmit="return confirm('Вы уверены, что хотите отменить запись?');">
+                {% csrf_token %}
+                <button type="submit" style="background: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 1.3rem; cursor: pointer;">
+                  Отменить
+                </button>
+              </form>
+              {% else %}
+              —
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center">
+      <p class="text-muted" style="font-size: 1.6rem;">У вас пока нет записей на приём.</p>
+    </div>
+    {% endif %}
+
+    <!-- Кнопка "Записаться на приём"-->
+    <div class="container text-center my-5" style="margin-top: 3rem !important;">
+      <a href="{% url 'patient-book-appointment' %}" class="hero-btn primary" style="display: inline-block; padding: 1rem 2.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 50px; font-weight: 900; font-size: 1.5rem; transition: all 0.3s ease;">
+        Записаться на приём
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

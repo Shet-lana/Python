@@ -1,0 +1,94 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<!-- Детали приёма -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+    <div class="container">
+        <!-- Заголовок -->
+        <h2 class="section-title text-center mb-4" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+            Приём у {{ appointment.dentist.get_full_name }}
+        </h2>
+
+        <!-- Информация о приёме -->
+        <div class="service-card mb-4">
+            <div class="service-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; line-height: 1.6;">
+                    <div>
+                        <p style="font-size: 1.6rem; margin: 0.5rem 0;">
+                            <strong>Пациент:</strong> {{ appointment.patient.get_full_name }}
+                        </p>
+                        <p style="font-size: 1.6rem; margin: 0.5rem 0;">
+                            <strong>Дата:</strong> {{ appointment.appointment_date|date:"d.m.Y H:i" }}
+                        </p>
+                    </div>
+                    <div>
+                        <p style="font-size: 1.6rem; margin: 0.5rem 0;">
+                            <strong>Жалобы:</strong>
+                            <span style="color: #555;">{{ appointment.description|default:"—" }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма заполнения данных о приёме -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Статус приёма -->
+            <div class="mb-4">
+                <label style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+                    Статус приёма:
+                </label>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" name="action" value="confirm" class="hero-btn primary" style="background: #28a745; padding: 0.75rem 1.5rem; font-size: 1.4rem; border: none; border-radius: 8px;">
+                        ✅ Пришёл
+                    </button>
+                    <button type="submit" name="action" value="cancel" class="hero-btn primary" style="background: #dc3545; padding: 0.75rem 1.5rem; font-size: 1.4rem; border: none; border-radius: 8px;">
+                        ❌ Не пришёл
+                    </button>
+                </div>
+            </div>
+
+            <!-- Перенос визита -->
+            <div class="mb-4" style="margin-top: 2rem;">
+                <a href="{% url 'doctor-reschedule-appointment' appointment.id %}" class="hero-btn primary" style="background: #ffc107; color: #212529; padding: 0.75rem 1.5rem; font-size: 1.4rem; text-decoration: none; border-radius: 8px;">
+                    ⏱ Перенести визит
+                </a>
+            </div>
+
+            <hr style="border-top: 1px solid #ddd; margin: 2rem 0;">
+
+            <!-- Комментарий -->
+            <div class="mb-4">
+                <label for="comment" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+                    Комментарий:
+                </label>
+                <textarea name="comment" id="comment" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem; line-height: 1.5;" rows="4">{{ appointment.comment|default:'' }}</textarea>
+            </div>
+
+            <!-- Загрузка документов -->
+            <div class="mb-4">
+                <label for="files" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+                    Загрузить документы (до 5):
+                </label>
+                <input type="file" name="files" id="files" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx">
+                <div style="font-size: 1.3rem; color: #666; margin-top: 0.5rem;">
+                    Поддерживаемые форматы: PDF, JPG, PNG, DOCX
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button type="submit" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; border: none;">
+                    Сохранить данные
+                </button>
+                <a href="{% url 'doctor-dashboard' %}" class="hero-btn secondary" style="background: #6c757d; color: white; padding: 1rem 2rem; font-size: 1.5rem; text-decoration: none; font-weight: 600;">
+                    Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Вход -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Вход в личный кабинет
+    </h2>
+
+    <!-- Карточка формы -->
+    <div class="services-grid" style="display: grid; grid-template-columns: 1fr; gap: 2rem; max-width: 500px; margin: 0 auto;">
+      <div class="service-card">
+        <div class="service-body">
+          <form method="post">
+            {% csrf_token %}
+            <!-- Поле логина -->
+            <div class="mb-3">
+              <label for="{{ form.username.id_for_label }}" class="form-label" style="font-weight: 600; color: #2c3e50; text-align: center; display: block; margin-bottom: 0.5rem;">Логин</label>
+              <div style="width: 100%; display: flex; justify-content: center;">
+                <div style="width: 100%;">
+                  {{ form.username }}
+                </div>
+              </div>
+              {% if form.username.errors %}
+              <div class="text-danger" style="font-size: 1.3rem; margin-top: 0.3rem; text-align: center;">{{ form.username.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Поле пароля -->
+            <div class="mb-3">
+              <label for="{{ form.password.id_for_label }}" class="form-label" style="font-weight: 600; color: #2c3e50; text-align: center; display: block; margin-bottom: 0.5rem;">Пароль</label>
+              <div style="width: 100%; display: flex; justify-content: center;">
+                <div style="width: 100%;">
+                  {{ form.password }}
+                </div>
+              </div>
+              {% if form.password.errors %}
+              <div class="text-danger" style="font-size: 1.3rem; margin-top: 0.3rem; text-align: center;">{{ form.password.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Кнопка входа -->
+            <button type="submit" class="hero-btn primary" style="width: 100%; padding: 12px; font-size: 1.5rem; border: none; font-weight: 600; margin-top: 1rem;">
+              Войти
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Ссылка на регистрацию -->
+      <div class="text-center">
+        <p style="font-size: 1.4rem; color: #555;">
+          Нет аккаунта?
+          <a href="{% url 'patient-signup' %}" style="color: #0d98ba; text-decoration: none; font-weight: 600;">
+            Зарегистрироваться
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Кнопка "На главную" -->
+<div class="container text-center my-5" style="margin-top: 3rem;">
+  <a href="{% url 'home' %}" class="hero-btn primary" style="display: inline-block; padding: 1rem 2.5rem; background: #f3b129; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.5rem; transition: all 0.3s ease;">
+    ← На главную
+  </a>
+</div>
+
+<!-- Гарантированный стиль для полей ввода -->
+<style>
+  .service-body input[type="text"],
+  .service-body input[type="password"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.6rem;
+    box-sizing: border-box;
+  }
+  .service-body input:focus {
+    border-color: #0d98ba;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13, 152, 186, 0.2);
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,208 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Панель врача -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Добро пожаловать, доктор {{ doctor.get_full_name }}
+    </h2>
+
+    <!-- Кнопка "Все пациенты" -->
+    <div class="text-center mb-5">
+      <a href="{% url 'patient-list' %}" class="hero-btn primary" style="padding: 1rem 2.5rem; font-size: 1.5rem; font-weight: 600; border: none;">
+        Все пациенты
+      </a>
+    </div>
+
+    <!-- Визиты сегодня -->
+    <div class="service-card mb-5">
+      <div class="service-header">
+        <h3 class="service-title">Визиты сегодня</h3>
+      </div>
+      <div class="service-body">
+        {% if today_appointments %}
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+          <thead>
+          <tr style="background-color: #d1f1ff; color: #007bff;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Пациент</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Время</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Жалобы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Пришёл</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Комментарий</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Документы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for app in today_appointments %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.patient.get_full_name }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.appointment_date|time:"H:i" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.description|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.is_attended == True %}✅ Пришёл
+              {% elif app.is_attended == False %}❌ Не пришёл
+              {% else %}—{% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.comment|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.documents.all %}
+              {% for doc in app.documents.all %}
+              <div class="mb-1">
+                <a href="{{ doc.file.url }}" target="_blank" class="text-decoration-none" style="color: #007bff;">
+                  {% if doc.file.url|slice:"-4:" in ".jpg,.jpeg,.png,.gif" %}
+                  🖼
+                  {% elif doc.file.url|slice:"-4:" == ".pdf" %}
+                  📄
+                  {% else %}
+                  📎
+                  {% endif %}
+                </a>
+              </div>
+              {% endfor %}
+              {% else %}
+              —
+              {% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              <a href="{% url 'doctor-appointment-detail' app.id %}" class="hero-btn primary" style="padding: 8px 12px; font-size: 1.3rem; display: inline-block;">Открыть</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">Сегодня нет приёмов.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Будущие визиты -->
+    <div class="service-card mb-5">
+      <div class="service-header">
+        <h3 class="service-title">Будущие визиты</h3>
+      </div>
+      <div class="service-body">
+        <p class="text-muted" style="font-size: 1.4rem; margin-bottom: 1rem;">
+          Можно открыть и добавить комментарий или документы (они отразятся у пациента). Это удобно для договорённостей, напоминаний, рекомендаций до приёма.
+        </p>
+        {% if future_appointments %}
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+          <thead>
+          <tr style="background-color: #d4f8e8; color: #28a89c;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Пациент</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Дата и время</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Жалобы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Комментарий</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Документы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for app in future_appointments %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.patient.get_full_name }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.appointment_date|date:"d.m.Y H:i" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.description|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.comment|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.documents.all %}
+              {% for doc in app.documents.all %}
+              <div class="mb-1">
+                <a href="{{ doc.file.url }}" target="_blank" class="text-decoration-none" style="color: #007bff;">
+                  {% if doc.file.url|slice:"-4:" in ".jpg,.jpeg,.png,.gif" %}
+                  🖼
+                  {% elif doc.file.url|slice:"-4:" == ".pdf" %}
+                  📄
+                  {% else %}
+                  📎
+                  {% endif %}
+                </a>
+              </div>
+              {% endfor %}
+              {% else %}
+              —
+              {% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              <a href="{% url 'doctor-appointment-detail' app.id %}" class="hero-btn primary" style="padding: 8px 12px; font-size: 1.3rem; display: inline-block;">Открыть</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">Нет будущих приёмов.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Прошедшие визиты -->
+    <div class="service-card mb-5">
+      <div class="service-header">
+        <h3 class="service-title">Прошедшие визиты</h3>
+      </div>
+      <div class="service-body">
+        {% if past_appointments %}
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+          <thead>
+          <tr style="background-color: #e9ecef; color: #495057;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Пациент</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Дата и время</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Жалобы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Пришёл</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Комментарий</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Документы</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for app in past_appointments %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.patient.get_full_name }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.appointment_date|date:"d.m.Y H:i" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.description|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.is_attended == True %}✅ Пришёл
+              {% elif app.is_attended == False %}❌ Не пришёл
+              {% else %}—{% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ app.comment|default:"—" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              {% if app.documents.all %}
+              {% for doc in app.documents.all %}
+              <div class="mb-1">
+                <a href="{{ doc.file.url }}" target="_blank" class="text-decoration-none" style="color: #007bff;">
+                  {% if doc.file.url|slice:"-4:" in ".jpg,.jpeg,.png,.gif" %}
+                  🖼
+                  {% elif doc.file.url|slice:"-4:" == ".pdf" %}
+                  📄
+                  {% else %}
+                  📎
+                  {% endif %}
+                </a>
+              </div>
+              {% endfor %}
+              {% else %}
+              —
+              {% endif %}
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              <a href="{% url 'doctor-appointment-detail' app.id %}" class="hero-btn primary" style="padding: 8px 12px; font-size: 1.3rem; display: inline-block;">Просмотр</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">Нет прошлых приёмов.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

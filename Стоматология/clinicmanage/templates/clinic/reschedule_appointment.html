@@ -1,0 +1,128 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<!-- Перенос визита -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+    <div class="container">
+        <!-- Заголовок -->
+        <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+            Перенос визита
+        </h2>
+
+        <!-- Карточка текущего приёма -->
+        <div class="service-card mb-5">
+            <div class="service-body">
+                <p style="font-size: 1.6rem; margin: 0.5rem 0;">
+                    <strong>Текущее время приёма:</strong> {{ appointment.appointment_date|date:"d.m.Y H:i" }}
+                </p>
+                <p style="font-size: 1.6rem; margin: 0.5rem 0;">
+                    <strong>Врач:</strong> {{ appointment.dentist.get_full_name }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Форма переноса -->
+        <div class="service-card">
+            <div class="service-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Новая дата -->
+                    <div class="mb-3">
+                        <label for="new_date" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+                            Новая дата:
+                        </label>
+                        <input type="date" name="new_date" id="new_date" class="form-control" required
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;">
+                        <div class="form-text" style="font-size: 1.3rem; color: #666; margin-top: 0.5rem;">
+                            Выберите дату (рабочие дни: пн–пт, не праздники)
+                        </div>
+                    </div>
+
+                    <!-- Новое время -->
+                    <div class="mb-3">
+                        <label for="new_time" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+                            Новое время:
+                        </label>
+                        <select name="new_time" id="new_time" class="form-control" required
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;">
+                            <option value="">--- Выберите время ---</option>
+                        </select>
+                        <div class="form-text" style="font-size: 1.3rem; color: #666; margin-top: 0.5rem;">
+                            Доступно с 08:00 до 20:00, интервал — 60 минут
+                        </div>
+                    </div>
+
+                    <!-- Сообщение о загрузке -->
+                    <div id="loading" class="mt-3" style="display: none; font-size: 1.4rem; color: #007bff;">
+                        <span style="margin-right: 8px;">●</span> Загрузка доступного времени...
+                    </div>
+
+                    <!-- Сообщение об отсутствии слотов -->
+                    <div id="no-slots" class="alert alert-warning mt-3" style="display: none; background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 1rem; border-radius: 8px; font-size: 1.4rem;">
+                        На выбранную дату нет доступного времени. Попробуйте другую дату.
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                        <button type="submit" class="hero-btn primary" style="padding: 1rem 2.5rem; font-size: 1.5rem; font-weight: 600;">
+                            Перенести визит
+                        </button>
+                        <a href="{% url 'patient-dashboard' %}" class="hero-btn secondary" style="background: #6c757d; color: white; padding: 1rem 2.5rem; font-size: 1.5rem; text-decoration: none; font-weight: 600;">
+                            Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- JavaScript для динамической загрузки времени -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dateInput = document.getElementById('new_date');
+      const timeSelect = document.getElementById('new_time');
+      const loading = document.getElementById('loading');
+      const noSlots = document.getElementById('no-slots');
+
+      dateInput.addEventListener('change', function () {
+        const selectedDate = this.value;
+        const doctorId = {{ appointment.dentist.id }};
+
+        if (!selectedDate) return;
+
+        // Очистка
+        timeSelect.innerHTML = '<option value="">--- Загрузка ---</option>';
+        noSlots.style.display = 'none';
+        loading.style.display = 'block';
+
+        // Запрос на получение слотов
+        fetch(`/get-available-slots-json/?date=${selectedDate}&doctor_id=${doctorId}`)
+          .then(response => response.json())
+          .then(data => {
+            loading.style.display = 'none';
+
+            if (!data.slots || data.slots.length === 0) {
+              noSlots.style.display = 'block';
+              timeSelect.innerHTML = '<option value="">Нет доступного времени</option>';
+              return;
+            }
+
+            // Заполняем select доступными слотами
+            let options = '<option value="">--- Выберите время ---</option>';
+            data.slots.forEach(slot => {
+              options += `<option value="${slot}">${slot}</option>`;
+            });
+            timeSelect.innerHTML = options;
+          })
+          .catch(err => {
+            loading.style.display = 'none';
+            timeSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+            console.error('Ошибка:', err);
+          });
+      });
+    });
+</script>
+{% endblock %}

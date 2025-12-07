@@ -1,0 +1,49 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Услуги -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Наши услуги
+    </h2>
+
+    <!-- Сетка услуг -->
+    <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax: 280px, 1fr); gap: 4rem;">
+      {% if categories %}
+      {% for category in categories %}
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">{{ category.name }}</h3>
+        </div>
+        <div class="service-body">
+          {% if category.description %}
+          <p class="service-desc">{{ category.description|truncatewords:10 }}</p>
+          {% endif %}
+          <ul class="service-list" style="padding-left: 1.5rem; margin: 1rem 0;">
+            {% for service in category.service_set.all %}
+            <li class="service-item">
+              <strong>{{ service.name }}</strong>
+              <br>
+              <small style="color: #666;">{{ service.description|default:"Описание отсутствует" }}</small>
+            </li>
+            {% empty %}
+            <li class="service-item text-muted">Нет услуг</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <!-- Если нет категорий -->
+      <div class="col-12 text-center">
+        <p class="text-muted">Пока нет доступных услуг.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

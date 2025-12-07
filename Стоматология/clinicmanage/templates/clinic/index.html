@@ -1,0 +1,169 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Профессиональная стоматология для всей семьи!
+      </h1>
+      <p class="hero-text">
+        Современные технологии и индивидуальный подход к каждому пациенту. Заботимся о вашей улыбке!
+      </p>
+      <div class="hero-buttons">
+        <a href="{% url 'login' %}" class="hero-btn primary">Войти</a>
+        <a href="{% url 'patient-signup' %}" class="hero-btn secondary">Зарегистрироваться</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="services">
+  <div class="container">
+    <h2 class="section-title">Наши услуги</h2>
+    <div class="services-grid">
+      {% for category in categories %}
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">{{ category.name }}</h3>
+        </div>
+        <div class="service-body">
+          {% if category.description %}
+          <p class="service-desc">{{ category.description|truncatewords:10 }}</p>
+          {% endif %}
+          <ul class="service-list">
+            {% for service in category.service_set.all|slice:":3" %}
+            <li class="service-item">
+              {{ service.name }}
+            </li>
+            {% empty %}
+            <li class="service-item text-muted">Нет услуг</li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'service-list' %}?category={{ category.id }}" class="service-link">
+            Подробнее →
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <p class="no-services">Пока нет категорий услуг.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Врачи -->
+<section class="container my-5">
+  <div class="section" style="padding: 5rem 0; background: #f8f9fa;">
+    <div class="container">
+      <!-- Заголовок "Наши врачи" -->
+      <h2 class="section-title" style="color: #0d98ba; font-family: 'Arial', sans-serif; text-align: center; margin-bottom: 3rem;">
+        Наши врачи
+      </h2>
+
+      <!-- Ряд с врачами -->
+      <div class="doctors-row" style="display: flex; overflow-x: auto; gap: 2rem; padding: 1rem 0; scroll-behavior: smooth; justify-content: center;">
+        {% for doctor in doctors|slice:":4" %} <!-- Показываем только 4 врачей -->
+        <div class="doctor-item" style="flex: 0 0 auto; width: 300px;">
+          <div class="doctor-card" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column;">
+            <div class="doctor-img-wrapper" style="width: 200px; height: 250px; margin: 1rem auto; border: 3px solid #0d98ba; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(13, 152, 186, 0.2);">
+              {% if doctor.profile_pic %}
+              <img src="{{ doctor.profile_pic.url }}" alt="Фото {{ doctor.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+              <img src="https://via.placeholder.com/200x250?text=Нет+фото" alt="Фото недоступно" style="width: 100%; height: 100%; object-fit: cover;">
+              {% endif %}
+            </div>
+            <div class="doctor-info" style="padding: 1rem; text-align: center; flex-grow: 1;">
+              <h4 class="doctor-name" style="font-size: 1.8rem; font-weight: 700; color: #0d98ba; margin-bottom: 0.5rem;">
+                {{ doctor.get_full_name }}
+              </h4>
+              <p class="doctor-specialty" style="font-size: 1.4rem; color: #28a89c; font-weight: 600; margin-bottom: 0.8rem;">
+                {{ doctor.department }}
+              </p>
+              <p class="doctor-about" style="font-size: 1.4rem; color: #555; line-height: 1.5; margin: 0;">
+                {{ doctor.about|truncatewords:10 }}
+              </p>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-muted" style="text-align: center; width: 100%;">Пока нет информации о врачах.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- О нашей клинике -->
+<section class="about-section" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок "О нашей клинике" -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      О нашей клинике
+    </h2>
+
+    <!-- Четыре карточки -->
+    <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem;">
+      <!-- Адрес -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Наш адрес</h3>
+        </div>
+        <div class="service-body">
+          <p class="service-desc">
+            000000, Волгоградская область, ул. адрес, д. 00.
+          </p>
+        </div>
+      </div>
+
+      <!-- Часы работы -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Часы работы</h3>
+        </div>
+        <div class="service-body">
+          <p class="service-desc">
+            ПН-ПТ с 8:00 до 20:00.<br>
+            СБ и ВС — выходные.
+          </p>
+        </div>
+      </div>
+
+      <!-- Контакты -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Контакты</h3>
+        </div>
+        <div class="service-body">
+          <p class="service-desc">
+            <strong>Телефон:</strong><br>
+            +7 (000) 000-00-00
+          </p>
+          <p class="service-desc">
+            <strong>Email:</strong><br>
+            gematovn@mail.ru
+          </p>
+        </div>
+      </div>
+
+      <!-- Преимущества -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Наши преимущества</h3>
+        </div>
+        <div class="service-body">
+          <ul class="service-list" style="padding-left: 1.5rem; margin: 1rem 0;">
+            <li class="service-item">Современное оборудование</li>
+            <li class="service-item">Опытные специалисты</li>
+            <li class="service-item">Индивидуальный подход</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block title %}О нас{% endblock %}
+
+{% block content %}
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      О нашей клинике
+    </h2>
+
+  <!-- Основной текст в отдельной карточке -->
+  <div class="about-intro" style="margin-bottom: 4rem;">
+    <div class="service-card" style="transition: transform 0.3s ease; position: relative;">
+      <div class="service-body">
+        <p class="service-desc">
+          Приветствуем Вас в нашей современной стоматологической клинике, где заботимся о каждом пациенте индивидуально.
+        </p>
+        <p class="service-desc">
+          Наши опытные специалисты предоставляют высококачественное лечение и консультации.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Четыре одинаковые карточки -->
+  <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem;">
+    <!-- Адрес -->
+    <div class="service-card">
+      <div class="service-header">
+        <h3 class="service-title">Наш адрес</h3>
+      </div>
+      <div class="service-body">
+        <p class="service-desc">
+          000000, Волгоградская область, ул. адрес, д. 00.
+        </p>
+      </div>
+    </div>
+
+    <!-- Часы работы -->
+    <div class="service-card">
+      <div class="service-header">
+        <h3 class="service-title">Часы работы</h3>
+      </div>
+      <div class="service-body">
+        <p class="service-desc">
+          ПН-ПТ с 8:00 до 20:00.<br>
+          СБ и ВС — выходные.
+        </p>
+      </div>
+    </div>
+
+    <!-- Контакты -->
+    <div class="service-card">
+      <div class="service-header">
+        <h3 class="service-title">Контакты</h3>
+      </div>
+      <div class="service-body">
+        <p class="service-desc">
+          <strong>Телефон:</strong><br>
+          +7 (000) 000-00-00
+        </p>
+        <p class="service-desc">
+          <strong>Email:</strong><br>
+          электронная почта
+        </p>
+      </div>
+    </div>
+
+    <!-- Дополнительная карточка -->
+    <div class="service-card">
+      <div class="service-header">
+        <h3 class="service-title">Наши преимущества</h3>
+      </div>
+      <div class="service-body">
+        <ul class="service-list" style="padding-left: 1.5rem; margin: 1rem 0;">
+          <li class="service-item">Современное оборудование</li>
+          <li class="service-item">Опытные специалисты</li>
+          <li class="service-item">Индивидуальный подход</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Кнопка "На главную" -->
+<div class="container text-center my-5" style="margin-top: 3rem;">
+  <a href="{% url 'home' %}" class="hero-btn primary" style="display: inline-block; padding: 1rem 2.5rem; background: #f3b129; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.5rem; transition: all 0.3s ease;">
+    ← На главную
+  </a>
+</div>
+{% endblock %}

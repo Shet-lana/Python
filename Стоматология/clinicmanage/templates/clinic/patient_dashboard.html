@@ -1,0 +1,77 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<!-- Панель пациента -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Добро пожаловать, {{ patient.get_full_name }}
+    </h2>
+
+    <!-- Основная информация -->
+    <div class="row mb-5" style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+      <!-- Персональные данные -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Ваша информация</h3>
+        </div>
+        <div class="service-body">
+          <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+            <li><strong>ФИО:</strong> {{ patient.get_full_name }}</li>
+            <li><strong>Дата первого визита:</strong> {{ visitDate }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Следующий приём -->
+      <div class="service-card">
+        <div class="service-header">
+          <h3 class="service-title">Ваш следующий приём</h3>
+        </div>
+        <div class="service-body">
+          {% if next_appointment %}
+          <p><strong>Дата и время:</strong> {{ next_appointment.appointment_date|date:"d.m.Y H:i" }}</p>
+          <p><strong>Врач:</strong> {{ next_appointment.dentist.get_full_name }}</p>
+          {% if next_appointment.description %}
+          <p><strong>Жалобы:</strong> {{ next_appointment.description }}</p>
+          {% endif %}
+          {% else %}
+          <p class="text-muted">Будущие визиты не назначены.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="row text-center" style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem;">
+      <a href="{% url 'patient-book-appointment' %}" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #fd7e14;">
+        Записаться на приём
+      </a>
+
+      {% if next_appointment %}
+      <a href="{% url 'reschedule-appointment' appointment_id=next_appointment.id %}" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #28a745; color: white;">
+        Перенести визит
+      </a>
+      {% else %}
+      <button class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #6c757d; color: white;" disabled>
+        Перенести визит
+      </button>
+      {% endif %}
+
+      <a href="{% url 'patient-view-appointment' %}" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #17a2b8; color: white;">
+        История визитов
+      </a>
+
+      <a href="{% url 'service-list' %}" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #28a745; color: white;">
+        Список услуг
+      </a>
+
+      <a href="{% url 'patient-edit-profile' %}" class="hero-btn primary" style="padding: 1rem 2rem; font-size: 1.5rem; font-weight: 600; min-width: 200px; background: #fd7e14; color: white;">
+        Редактировать профиль
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

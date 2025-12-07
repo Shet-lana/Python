@@ -1,0 +1,91 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Запись на приём -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Запись на приём
+    </h2>
+
+    <!-- Форма записи -->
+    <div class="service-card">
+      <div class="service-body">
+        <form method="post" id="appointment-form">
+          {% csrf_token %}
+
+          <!-- Выбор врача -->
+          <div class="mb-3">
+            <label for="id_dentist" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+              Выберите врача:
+            </label>
+            <select name="dentist" id="id_dentist" class="form-control" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;">
+              <option value="">--- Выберите врача ---</option>
+              {% for doctor in doctors %}
+              <option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Дата приёма -->
+          <div class="mb-3">
+            <label for="appointment_date" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+              Дата приёма:
+            </label>
+            <input type="date" name="appointment_date" id="appointment_date" class="form-control"
+                   required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;">
+            <div class="form-text" style="font-size: 1.3rem; color: #666; margin-top: 0.5rem;">
+              Рабочие дни: понедельник–пятница (не праздники)
+            </div>
+          </div>
+
+          <!-- Время приёма -->
+          <div class="mb-3">
+            <label for="appointment_time" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+              Время приёма:
+            </label>
+            <select name="appointment_time" id="appointment_time" class="form-control" required
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem;">
+              <option value="">--- Выберите время ---</option>
+            </select>
+            <div class="form-text" style="font-size: 1.3rem; color: #666; margin-top: 0.5rem;">
+              Доступно с 08:00 до 20:00, интервал — 60 минут
+            </div>
+          </div>
+
+          <!-- Сообщение о загрузке -->
+          <div id="loading" class="mt-3" style="display: none; font-size: 1.4rem; color: #007bff;">
+            <span style="margin-right: 8px;">●</span> Загрузка доступного времени...
+          </div>
+
+          <!-- Сообщение об отсутствии слотов -->
+          <div id="no-slots" class="alert alert-warning mt-3" style="display: none; background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 1rem; border-radius: 8px; font-size: 1.4rem;">
+            На выбранную дату нет доступного времени. Попробуйте другую дату.
+          </div>
+
+          <!-- Жалобы -->
+          <div class="mb-3">
+            <label for="description" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.8rem;">
+              Жалобы (по желанию):
+            </label>
+            <textarea name="description" id="description" class="form-control" rows="3"
+                      style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.6rem; line-height: 1.5;"></textarea>
+          </div>
+
+          <!-- Кнопка отправки -->
+          <button type="submit" class="hero-btn primary" style="padding: 1rem 2.5rem; font-size: 1.5rem; font-weight: 600;">
+            Записаться на приём
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Подключение JS -->
+<script src="{% static 'js/book_appointment.js' %}"></script>
+{% endblock %}

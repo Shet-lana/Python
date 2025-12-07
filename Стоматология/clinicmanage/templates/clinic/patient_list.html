@@ -1,0 +1,56 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<!-- Все пациенты -->
+<section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+  <div class="container">
+    <!-- Заголовок -->
+    <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+      Все пациенты
+    </h2>
+
+    <!-- Таблица пациентов -->
+    {% if patients %}
+    <div class="service-card">
+      <div class="service-body">
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+          <thead style="background-color: #d1f1ff; color: #007bff;">
+          <tr>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ФИО</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Телефон</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Дата первого визита</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for patient in patients %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ patient.user.last_name }} {{ patient.user.first_name }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ patient.mobile }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ patient.first_visit_date|date:"d.m.Y" }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+              <a href="{% url 'patient-detail' patient.id %}" class="hero-btn primary" style="padding: 8px 12px; font-size: 1.3rem; display: inline-block;">История приёмов</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center">
+      <p class="text-muted">Нет зарегистрированных пациентов.</p>
+    </div>
+    {% endif %}
+
+    <!-- Кнопка "Назад" -->
+    <div class="text-center mt-4">
+      <a href="{% url 'doctor-dashboard' %}" class="hero-btn secondary" style="background: #6c757d; color: white; padding: 1rem 2.5rem; font-size: 1.5rem; text-decoration: none; font-weight: 600;">
+        ← Назад
+      </a>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

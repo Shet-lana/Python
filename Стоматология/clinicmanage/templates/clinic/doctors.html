@@ -1,0 +1,41 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container my-5">
+    <section class="services" style="padding: 5rem 0; background: #f8f9fa;">
+        <div class="container">
+            <!-- Заголовок -->
+            <h2 class="section-title text-center mb-5" style="color: #0d98ba; font-family: 'Arial', sans-serif;">
+                Наши врачи
+            </h2>
+
+    <div class="doctors-row">
+        {% for doctor in doctors %}
+        <div class="doctor-item">
+            <div class="doctor-card">
+                <div class="doctor-img-wrapper">
+                    {% if doctor.profile_pic %}
+                    <img src="{{ doctor.profile_pic.url }}" alt="Фото {{ doctor.get_full_name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/200x250?text=Нет+фото" alt="Фото недоступно">
+                    {% endif %}
+                </div>
+                <div class="doctor-info">
+                    <h4 class="doctor-name">{{ doctor.get_full_name }}</h4>
+                    <p class="doctor-specialty">{{ doctor.department }}</p>
+                    <p class="doctor-about">{{ doctor.about }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted w-100">Пока нет информации о врачах.</p>
+        {% endfor %}
+    </div>
+</div>
+        <!-- Кнопка "На главную" -->
+        <div class="container text-center my-5" style="margin-top: 3rem;">
+            <a href="{% url 'home' %}" class="hero-btn primary" style="display: inline-block; padding: 1rem 2.5rem; background: #f3b129; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.5rem; transition: all 0.3s ease;">
+                ← На главную
+            </a>
+        </div>
+{% endblock %}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Стоматология{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<!-- Условное отображение кнопки "Назад" -->
+{% if request.path != '/' %}
+<div class="back-container">
+  <a href="#" class="back-btn hero-btn primary" onclick="window.history.back(); return false;" style="background: #0d98ba; color: white; padding: 0.8rem 1.8rem; font-size: 1.4rem; border-radius: 50px; text-decoration: none; font-weight: 600;">
+    ← Назад
+  </a>
+</div>
+{% endif %}
+
+<!-- Header -->
+<header data-aos="fade-down">
+  <div class="container">
+    <nav class="navbar">
+      <a href="{% url 'home' %}" class="logo">ЛоготипСтоматологии</a>
+
+      <button class="navbar-toggler" aria-label="Меню">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <div class="nav-menu">
+        <ul class="nav-links">
+          <li><a href="{% url 'aboutus' %}">О нас</a></li>
+          <li><a href="{% url 'contactus' %}">Контакты</a></li>
+          <li><a href="{% url 'doctors' %}">Наши врачи</a></li>
+        </ul>
+        <div class="auth-buttons">
+          {% if not user.is_authenticated %}
+          <button class="auth-btn" onclick="location.href='{% url 'login' %}'">Вход</button>
+          <button class="auth-btn primary" onclick="location.href='{% url 'patient-signup' %}'">Регистрация</button>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer data-aos="fade-up">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3>Клиника Название</h3>
+        <p>Современная стоматология для всей семьи с использованием передовых технологий и индивидуальным подходом к каждому пациенту.</p>
+      </div>
+
+    </div>
+    <div class="copyright">
+      © {{ year|default:2025 }} Клиника "Название". Все права защищены. Лицензия на медицинскую деятельность №........ от ........... г.
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true,
+      offset: 100
+    });
+
+    // Мобильное меню
+    const toggler = document.querySelector('.navbar-toggler');
+    const menu = document.querySelector('.nav-menu');
+
+    toggler.addEventListener('click', () => {
+      menu.classList.toggle('active');
+      toggler.classList.toggle('active');
+    });
+
+    // Анимация появления страницы
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+      document.body.style.transition = 'opacity 0.8s ease';
+      document.body.style.opacity = '1';
+    }, 100);
+  });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -20,7 +20,7 @@ TEMPLATE_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR / 'static'
 
 # Конфигурация секретного ключа и разрешенных хостов
-SECRET_KEY = 'django-insecure-azv!yk-224t7j8l@t!ky$gsn7@7w43$h-%b&*y8wh*01#ublv+'
+SECRET_KEY = 'подставьте сами'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -119,9 +119,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'antonovasvetlana1989@gmail.com'
-EMAIL_HOST_PASSWORD = 'Pas__3452?'
-EMAIL_RECEIVING_USER = ['antonovasvetlana1989@gmail.com']
+EMAIL_HOST_USER = '.....'
+EMAIL_HOST_PASSWORD = '....'
+EMAIL_RECEIVING_USER = ['......']
 
 SITE_ID = 1  # Устанавливаем фиксированный идентификатор сайта
 SITES_ENABLED = False  # Выключение проверки доменов
+
